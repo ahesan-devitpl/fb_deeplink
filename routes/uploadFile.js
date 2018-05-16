@@ -65,7 +65,11 @@ router.post('/base64', function(req, res) {
   var bitmap = new Buffer(req.body.image, 'base64');
   var name = Date.now();
   var imageName = name + ".png";
-  fs.writeFileSync(path.resolve('uploads') + "/" + imageName, bitmap);
+  var dir = path.resolve('uploads') + "/";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  fs.writeFileSync(dir + imageName, bitmap);
   var basePath = req.protocol + '://' + req.get('host');
 
   var pagePath = name + ".html";
@@ -77,7 +81,11 @@ router.post('/base64', function(req, res) {
   templateString = replaceall("<%= url %>", imageUrl, templateString)
   //console.log(templateString);
 
-  fs.writeFile(path.resolve('pages') + "/" + pagePath, templateString, function(err) {
+  var dir = path.resolve('pages') + "/";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  fs.writeFile(dir + pagePath, templateString, function(err) {
     if (err) {
       return console.log(err);
     }
