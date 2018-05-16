@@ -8,7 +8,11 @@ var base64 = require('base-64');
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
-    callback(null, "uploads/");
+    var dir = 'uploads/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    callback(null, dir);
   },
   filename: function(req, file, callback) {
     callback(null, file.originalname);
@@ -33,7 +37,11 @@ router.post('/', function(req, res) {
     templateString = replaceall("<%= url %>", imageUrl, templateString)
     //console.log(templateString);
     var pagePath = Date.now() + ".html";
-    fs.writeFile(path.resolve('pages') + "/" + pagePath, templateString, function(err) {
+    var dir = path.resolve('pages') + "/";
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    fs.writeFile(dir + pagePath, templateString, function(err) {
       if (err) {
         return console.log(err);
       }
@@ -56,7 +64,7 @@ router.post('/base64', function(req, res) {
   //var decodedData = base64.decode(req.body.image);
   var bitmap = new Buffer(req.body.image, 'base64');
   var name = Date.now();
-  var imageName =  name + ".png";
+  var imageName = name + ".png";
   fs.writeFileSync(path.resolve('uploads') + "/" + imageName, bitmap);
   var basePath = req.protocol + '://' + req.get('host');
 
