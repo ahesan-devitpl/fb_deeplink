@@ -1,11 +1,11 @@
 {
   "name": "fb_deeplink",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "FB deeplink",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "main": "server.js",
   "dependencies": {
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
