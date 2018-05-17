@@ -6,6 +6,7 @@ var app = express();
 
 var indexRouter = require('./routes/index');
 var uploadRouter = require('./routes/uploadFile');
+var s3Router = require('./routes/uploadS3');
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
@@ -32,6 +33,7 @@ app.use('/pages',express.static(path.join(__dirname, 'pages')));
 
 app.use('/', indexRouter);
 app.use('/upload', uploadRouter);
+app.use('/s3', s3Router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
