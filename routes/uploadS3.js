@@ -3,9 +3,10 @@ var router = express.Router();
 var fs = require('fs');
 var replaceall = require("replaceall");
 var AWS = require('aws-sdk');
+
 AWS.config.update({
-  accessKeyId: 'AKIAJH6Y6KHDA3CDRH3A',
-  secretAccessKey: 'J3IWjmNAbeAD7bhzylUhHdzogkbHpkKLnYPkbiON'
+  accessKeyId: 'YOUR ID',
+  secretAccessKey: 'YOUR ACCESS KEY'
 });
 const AWSUrlPrefix = "https://s3.amazonaws.com/fb-deeplink/";
 
@@ -18,15 +19,14 @@ var s3Bucket = new AWS.S3({
 router.post('/', function(req, res) {
 
   var name = Date.now();
-  var imageName = name + ".png";
+  var imageName = name + ".jpeg";
   var imageKey = "images/" + imageName;
 
-  var buf = new Buffer(req.body.image.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+  var buf = new Buffer(req.body.image, 'base64');
   var data = {
     Key: imageKey,
     Body: buf,
-    ContentEncoding: 'base64',
-    ContentType: 'image/png',
+    ContentEncoding: 'gzip',
     ACL: "public-read"
   };
 
@@ -53,12 +53,11 @@ function createAndUpload(name, imageUrl, res) {
   var data = {
     Key: pageKey,
     Body: templateString,
-    ContentType: 'binary',
     ContentType: 'text/html',
     ACL: "public-read",
   };
 
-  s3Bucket.putObject(data, function(err, data) {
+  s3Bucket.upload(data, function(err, data) {
     if (err) {
       console.log(err);
       console.log('Error uploading data: ', data);
@@ -70,9 +69,34 @@ function createAndUpload(name, imageUrl, res) {
         image: imageUrl,
         page: pageUrl
       }));
-      res.end();
+
     }
   });
+
+  // var data = {
+  //   Key: pageKey,
+  //   Body: templateString,
+  //   ContentType: 'binary',
+  //   ContentType: 'text/html',
+  //   ACL: "public-read",
+  // };
+  //
+  // s3Bucket.putObject(data, function(err, data) {
+  //   if (err) {
+  //     console.log(err);
+  //     console.log('Error uploading data: ', data);
+  //   } else {
+  //     var pageUrl = AWSUrlPrefix + pageKey;
+  //     console.log('succesfully uploaded the file! ');
+  //     res.setHeader('Content-Type', 'application/json');
+  //     res.send(JSON.stringify({
+  //       image: imageUrl,
+  //       page: pageUrl
+  //     }));
+  //
+  //   }
+  // });
+
 }
 
 module.exports = router;
