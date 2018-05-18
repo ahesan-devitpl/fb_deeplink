@@ -53,6 +53,7 @@ function createAndUpload(name, imageUrl, res) {
   var data = {
     Key: pageKey,
     Body: templateString,
+    ContentType: 'binary',
     ContentType: 'text/html',
     ACL: "public-read",
   };
